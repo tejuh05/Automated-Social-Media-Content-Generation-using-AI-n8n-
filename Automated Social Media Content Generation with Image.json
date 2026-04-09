@@ -1,0 +1,399 @@
+{
+  "name": "Automated Social Media Content Generation with Image",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "17ljr81y25DCelrTU8QhXQAP1UHeT1DnU0sK8zmH9Vi0",
+          "mode": "list",
+          "cachedResultName": "news articles links with images",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17ljr81y25DCelrTU8QhXQAP1UHeT1DnU0sK8zmH9Vi0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17ljr81y25DCelrTU8QhXQAP1UHeT1DnU0sK8zmH9Vi0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        -64
+      ],
+      "id": "d9470bcc-59b9-41ab-bd46-223962182988",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "A2Meza3FeKgbzRWX",
+          "name": "Google Sheets Trigger account 3403"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=summarize the article",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=summarize this article  {{ $json['news article links'] }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -112,
+        -64
+      ],
+      "id": "91876205-4b4e-4b34-b677-87e5ebe1668f",
+      "name": "summarize article"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        160
+      ],
+      "id": "77c4807e-5cfa-4181-9337-f54993934dd2",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "h6pXWiVlg2Zj56fd",
+          "name": "Google Gemini(PaLM) Api account 8446"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Act like a consistent LinkedIn creator who shares thoughts on AI in a simple, real, and engaging way. You’ve just read a news article and now you’re sharing your personal take on it.\n\nWrite a LinkedIn post using a soft STAR format (flowing naturally, not labeled):\n\nStart by setting the context (what the news is about)\nBring in the main point or challenge\nShare 2–3 key takeaways along with what you personally found interesting\nEnd with what this means going forward (in simple terms)\n\nStyle Guidelines:\n\nKeep it under 3000 characters\nWrite in simple, clear English (avoid complex or “AI-sounding” words)\nMake it feel like you actually read it and are sharing your thoughts\nUse short paragraphs for easy reading\nNo bullet points, no asterisks (*)\nKeep the tone friendly, curious, and slightly expressive (not too formal, not too casual)\nAdd small natural phrases like “what stood out to me was…”, “this got me thinking…”, “one thing I noticed…”\n\nOpening Line:\nStart with something engaging like:\n“Just came across this and it got me thinking…”\nor\n“This was interesting to read…”\n\nEnding:\n\nEnd with a simple question or thought to invite discussion\nAdd 3–5 relevant hashtags\n\nMake sure the post feels smooth, natural, and enjoyable to read, not like a report or AI-generated content.\n\nArticle summary: {{ $json.text }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        240,
+        -64
+      ],
+      "id": "8bde7ebd-e26d-421e-9f7d-9e7ed631a372",
+      "name": "Create LinkedIn Post"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        320,
+        160
+      ],
+      "id": "4b9f041f-0c15-4ff0-99a0-3fbbe2556b0e",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "h6pXWiVlg2Zj56fd",
+          "name": "Google Gemini(PaLM) Api account 8446"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Create a concise image prompt (max 50 words) for a LinkedIn post visual based on this AI article summary. Focus on modern, professional imagery with technology/business themes. Use clear descriptive terms suitable for AI image generation. {{ $json.text }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        592,
+        -64
+      ],
+      "id": "a04bfa94-04cf-442a-aeb0-a6c878cb657d",
+      "name": "Generate Image Prompt"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        672,
+        160
+      ],
+      "id": "9b4fdbce-3b83-4355-b11a-a7edb7d586aa",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "h6pXWiVlg2Zj56fd",
+          "name": "Google Gemini(PaLM) Api account 8446"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.freepik.com/v1/ai/mystic",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-freepik-api-key",
+              "value": "FPSX6bf5c0c03ccd3c81e4023b8dc11bbc7a"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        944,
+        -64
+      ],
+      "id": "630ada2e-8077-4cfd-a1f2-6de16be38f4f",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        -64
+      ],
+      "id": "de7790a8-ce9c-4d5f-9bdb-751549f8e34b",
+      "name": "Wait for Image",
+      "webhookId": "aff30cd9-931b-4997-957f-f1869eff6678"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.freepik.com/v1/ai/mystic/{{ $json.data[0].task_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-freepik-api-key",
+              "value": "FPSX6bf5c0c03ccd3c81e4023b8dc11bbc7a"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1392,
+        -64
+      ],
+      "id": "7d93a63b-762e-48d4-83ca-569b81f6f545",
+      "name": "Check Status"
+    },
+    {
+      "parameters": {
+        "url": "={{$json[\"data\"][\"generated\"][0]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1600,
+        -64
+      ],
+      "id": "7fbbbd3f-ca61-4cae-8e68-7891d505c945",
+      "name": "Download Image"
+    },
+    {
+      "parameters": {
+        "person": "xhT0TGUFwd",
+        "text": "={{ $('Create LinkedIn Post').item.json.text }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1808,
+        -64
+      ],
+      "id": "de0d3d4e-8da9-43a6-b1f1-6c17552b43c7",
+      "name": "Create a post",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "s6Kihg7vyN3BgrMK",
+          "name": "LinkedIn account 2474"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "summarize article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "summarize article": {
+      "main": [
+        [
+          {
+            "node": "Create LinkedIn Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "summarize article",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Create LinkedIn Post",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create LinkedIn Post": {
+      "main": [
+        [
+          {
+            "node": "Generate Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Image Prompt",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait for Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Image": {
+      "main": [
+        [
+          {
+            "node": "Check Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ee21b0e6-a118-4bb1-a8bd-a7fcb3a8b444",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "969257b09ad2942bbaff2e2288304f4969030574d109cdeca05bf11f630884df"
+  },
+  "id": "zWbIdYR6mXQIXqUW",
+  "tags": []
+}
